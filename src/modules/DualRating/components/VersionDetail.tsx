@@ -92,8 +92,6 @@ const VersionDetail = ({ version }: VersionDetailProps) => {
     { title: 'AI-咨访同盟均分', dataIndex: 'allianceAvg', key: 'allianceAvg', render: (v: number) => v.toFixed(1) },
   ];
 
-  const versionLabel = version === 'A' ? '心理咨询风格' : '教练技术风格';
-
   return (
     <div>
       {/* 用户主观评分 */}

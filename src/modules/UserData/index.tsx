@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Card, Row, Col, Table } from 'antd';
+import { Card, Row, Col } from 'antd';
 import { useDate } from '../../context/DateContext';
 import { StatCard, TrendChart } from '../../components';
 import { generateUserUsageData } from '../../mock';
