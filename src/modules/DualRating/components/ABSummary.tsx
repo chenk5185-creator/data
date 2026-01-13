@@ -41,9 +41,10 @@ const ABSummary = () => {
     { key: '5', metric: '4-5分占比', versionA: `${aFourFiveRatio}%`, versionB: `${bFourFiveRatio}%` },
     { key: '6', metric: '洞察触发率', versionA: `${aInsightRate}%`, versionB: `${bInsightRate}%` },
     { key: '7', metric: '评分率', versionA: `${aRatingRate}%`, versionB: `${bRatingRate}%` },
-    { key: '8', metric: 'AI-共情均分', versionA: versionA.aiEvaluation.empathyScore.toFixed(1), versionB: versionB.aiEvaluation.empathyScore.toFixed(1) },
-    { key: '9', metric: 'AI-积极关注均分', versionA: versionA.aiEvaluation.positiveAttentionScore.toFixed(1), versionB: versionB.aiEvaluation.positiveAttentionScore.toFixed(1) },
-    { key: '10', metric: 'AI-咨访同盟均分', versionA: versionA.aiEvaluation.allianceScore.toFixed(1), versionB: versionB.aiEvaluation.allianceScore.toFixed(1) },
+    { key: '8', metric: '点踩率', versionA: `${versionA.userRating.dislikeRate}%`, versionB: `${versionB.userRating.dislikeRate}%` },
+    { key: '9', metric: 'AI-共情均分', versionA: versionA.aiEvaluation.empathyScore.toFixed(1), versionB: versionB.aiEvaluation.empathyScore.toFixed(1) },
+    { key: '10', metric: 'AI-积极关注均分', versionA: versionA.aiEvaluation.positiveAttentionScore.toFixed(1), versionB: versionB.aiEvaluation.positiveAttentionScore.toFixed(1) },
+    { key: '11', metric: 'AI-咨访同盟均分', versionA: versionA.aiEvaluation.allianceScore.toFixed(1), versionB: versionB.aiEvaluation.allianceScore.toFixed(1) },
   ];
 
   const columns = [
@@ -100,6 +101,10 @@ const ABSummary = () => {
         seriesA = abTrendData.map((d) => d.versionA.aiEvaluation.allianceScore);
         seriesB = abTrendData.map((d) => d.versionB.aiEvaluation.allianceScore);
         break;
+      case 'dislikeRate':
+        seriesA = abTrendData.map((d) => d.versionA.userRating.dislikeRate);
+        seriesB = abTrendData.map((d) => d.versionB.userRating.dislikeRate);
+        break;
     }
 
     return { dates, seriesA, seriesB };
@@ -110,6 +115,7 @@ const ABSummary = () => {
   const metricOptions = [
     { value: 'fiveStarRatio', label: '5分占比' },
     { value: 'fourFiveRatio', label: '4-5分占比' },
+    { value: 'dislikeRate', label: '点踩率' },
     { value: 'empathy', label: 'AI-共情均分' },
     { value: 'positiveAttention', label: 'AI-积极关注均分' },
     { value: 'alliance', label: 'AI-咨访同盟均分' },
@@ -151,7 +157,7 @@ const ABSummary = () => {
             { name: 'A版（心理咨询）', data: seriesA, color: '#1890ff' },
             { name: 'B版（教练技术）', data: seriesB, color: '#ff7a45' },
           ]}
-          yAxisLabel={trendMetric.includes('Ratio') ? '占比(%)' : '分数'}
+          yAxisLabel={trendMetric.includes('Ratio') || trendMetric === 'dislikeRate' ? '占比(%)' : '分数'}
         />
       </Card>
     </div>

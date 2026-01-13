@@ -1,11 +1,15 @@
-import { useMemo } from 'react';
-import { Card, Row, Col, Table, Button, Divider } from 'antd';
+import { useMemo, useState } from 'react';
+import { Card, Row, Col, Table, Button, Divider, Modal, Tag, Typography } from 'antd';
+import { DislikeOutlined } from '@ant-design/icons';
 import { useDate } from '../../../context/DateContext';
 import { StatCard, TrendChart } from '../../../components';
-import { generateUserRatingData } from '../../../mock';
+import { generateUserRatingData, sampleDislikeConversations } from '../../../mock';
+
+const { Text } = Typography;
 
 const UserRating = () => {
   const { selectedDate } = useDate();
+  const [dislikeModalVisible, setDislikeModalVisible] = useState(false);
 
   const allData = useMemo(() => generateUserRatingData(30), []);
 
@@ -145,7 +149,7 @@ const UserRating = () => {
       </Card>
 
       {/* 评分分布 */}
-      <Card size="small" title="评分分布（每日）">
+      <Card size="small" title="评分分布（每日）" style={{ marginBottom: 16 }}>
         <p style={{ marginBottom: 12, color: '#ff4d4f', fontSize: 12 }}>
           说明：1-4分都代表用户不满，需要关注和改进
         </p>
@@ -156,6 +160,105 @@ const UserRating = () => {
           size="small"
         />
       </Card>
+
+      {/* 点踩数据 */}
+      <Card size="small" title="点踩数据（每日）" style={{ marginBottom: 16 }}>
+        <Row gutter={16} style={{ marginBottom: 16 }}>
+          <Col span={6}>
+            <StatCard
+              title="今日点踩轮次数"
+              value={currentData.dislikeCount}
+              suffix="次"
+            />
+          </Col>
+          <Col span={6}>
+            <StatCard
+              title="点踩率"
+              value={currentData.dislikeRate}
+              suffix="%"
+              tooltip="点踩轮次数 ÷ 总对话轮次数"
+              valueStyle={{ color: currentData.dislikeRate > 1 ? '#ff4d4f' : '#52c41a' }}
+            />
+          </Col>
+          <Col span={6}>
+            <StatCard
+              title="累计点踩轮次数"
+              value={currentData.cumulativeDislikeCount}
+              suffix="次"
+            />
+          </Col>
+          <Col span={6}>
+            <div style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
+              <Button
+                type="primary"
+                icon={<DislikeOutlined />}
+                onClick={() => setDislikeModalVisible(true)}
+              >
+                查看所有点踩对话
+              </Button>
+            </div>
+          </Col>
+        </Row>
+        <p style={{ color: '#666', fontSize: 12, marginBottom: 16 }}>
+          说明：统计维度为"轮次"，一个用户可能对多个回复点踩。只统计点踩，不统计点赞。
+        </p>
+        <TrendChart
+          dates={allData.map((d) => d.date)}
+          series={[
+            { name: '点踩率', data: allData.map((d) => d.dislikeRate), color: '#ff4d4f' },
+          ]}
+          yAxisLabel="点踩率(%)"
+          showLegend={false}
+          height={250}
+        />
+      </Card>
+
+      {/* 点踩对话弹窗 */}
+      <Modal
+        title="点踩对话列表（按时间倒序）"
+        open={dislikeModalVisible}
+        onCancel={() => setDislikeModalVisible(false)}
+        footer={null}
+        width={700}
+      >
+        {sampleDislikeConversations.map((conv) => (
+          <Card
+            key={conv.topicId}
+            size="small"
+            title={
+              <span>
+                话题ID：{conv.topicId}
+                <Text type="secondary" style={{ marginLeft: 16, fontSize: 12 }}>
+                  点踩时间：{conv.dislikeTime}
+                </Text>
+              </span>
+            }
+            style={{ marginBottom: 16 }}
+          >
+            <p style={{ marginBottom: 8, color: '#666' }}>话题：{conv.topic}</p>
+            {conv.messages.map((msg, idx) => (
+              <div
+                key={idx}
+                style={{
+                  padding: '8px 12px',
+                  marginBottom: 8,
+                  background: msg.role === 'user' ? '#f5f5f5' : '#e6f7ff',
+                  borderRadius: 4,
+                  border: msg.isDisliked ? '2px solid #ff4d4f' : 'none',
+                }}
+              >
+                <Text strong>{msg.role === 'user' ? '用户' : '齐家AI'}：</Text>
+                <Text>{msg.content}</Text>
+                {msg.isDisliked && (
+                  <Tag color="error" style={{ marginLeft: 8 }}>
+                    <DislikeOutlined /> 点踩
+                  </Tag>
+                )}
+              </div>
+            ))}
+          </Card>
+        ))}
+      </Modal>
 
       <Divider />
     </div>

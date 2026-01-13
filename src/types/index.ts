@@ -16,7 +16,24 @@ export interface DailyUserRating {
   totalRatedUsers: number;      // 评分总人数
   insightUsers: number;         // 生成洞察用户数
   activeUsers: number;          // 活跃用户数
+  totalConversations: number;   // 总对话轮次数
   distribution: RatingDistribution;
+  // 点踩数据
+  dislikeCount: number;         // 今日点踩轮次数
+  dislikeRate: number;          // 点踩率 (点踩轮次数 ÷ 总对话轮次数)
+  cumulativeDislikeCount: number; // 累计点踩轮次数
+}
+
+// 点踩对话示例
+export interface DislikeConversation {
+  topicId: string;
+  dislikeTime: string;
+  topic: string;
+  messages: {
+    role: 'user' | 'ai';
+    content: string;
+    isDisliked?: boolean;
+  }[];
 }
 
 // 每日AI评估数据

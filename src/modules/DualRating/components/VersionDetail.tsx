@@ -128,6 +128,28 @@ const VersionDetail = ({ version }: VersionDetailProps) => {
         <Table columns={distributionColumns} dataSource={distributionData} pagination={false} size="small" />
       </Card>
 
+      <Card size="small" title="点踩数据" style={{ marginBottom: 16 }}>
+        <Row gutter={16}>
+          <Col span={8}>
+            <StatCard title="今日点踩轮次数" value={userRating.dislikeCount} suffix="次" />
+          </Col>
+          <Col span={8}>
+            <StatCard
+              title="点踩率"
+              value={userRating.dislikeRate}
+              suffix="%"
+              valueStyle={{ color: userRating.dislikeRate > 1 ? '#ff4d4f' : '#52c41a' }}
+            />
+          </Col>
+          <Col span={8}>
+            <StatCard title="累计点踩轮次数" value={userRating.cumulativeDislikeCount} suffix="次" />
+          </Col>
+        </Row>
+        <div style={{ marginTop: 16 }}>
+          <Button type="link" style={{ padding: 0 }}>查看点踩对话</Button>
+        </div>
+      </Card>
+
       <Card size="small" title="趋势图" style={{ marginBottom: 16 }}>
         <TrendChart
           dates={dates}
